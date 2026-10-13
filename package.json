@@ -1,0 +1,168 @@
+{
+  "name": "vscode-camouflage",
+  "displayName": "VS Code Camouflage",
+  "description": "在編輯器裡鋪滿以假亂真的程式碼亂碼（或顯示浮水印文字），不修改 VS Code 本體檔案。",
+  "version": "0.1.0",
+  "publisher": "weichenyuan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YuanWeiChen16/vscode-camouflage.git"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "backgroundText.toggle",
+        "title": "Background Text: 開關背景文字"
+      },
+      {
+        "command": "backgroundText.setText",
+        "title": "Background Text: 設定背景文字"
+      }
+    ],
+    "configuration": {
+      "title": "Background Text",
+      "properties": {
+        "backgroundText.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否顯示背景文字。"
+        },
+        "backgroundText.mode": {
+          "type": "string",
+          "enum": [
+            "text",
+            "random"
+          ],
+          "enumDescriptions": [
+            "顯示 backgroundText.lines 設定的文字",
+            "用隨機亂碼鋪滿整個編輯區，字體與編輯器相同"
+          ],
+          "default": "text",
+          "description": "顯示模式。"
+        },
+        "backgroundText.random.charset": {
+          "type": "string",
+          "default": "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*+=<>?",
+          "description": "亂碼模式使用的字元。"
+        },
+        "backgroundText.random.documentRatio": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "亂碼中取自目前檔案內容的字元比例（0.7 = 70% 取自檔案、30% 取自 charset）。"
+        },
+        "backgroundText.random.palette": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "editor.foreground",
+            "debugTokenExpression.name",
+            "debugTokenExpression.value",
+            "debugTokenExpression.string",
+            "debugTokenExpression.number",
+            "debugTokenExpression.boolean",
+            "symbolIcon.functionForeground",
+            "symbolIcon.classForeground",
+            "symbolIcon.variableForeground",
+            "terminal.ansiBrightBlue",
+            "terminal.ansiYellow",
+            "terminal.ansiCyan",
+            "terminal.ansiGreen"
+          ],
+          "markdownDescription": "亂碼模式的調色盤，每段亂碼隨機取一色（像語法上色）。可填佈景主題色 ID 或 CSS 顏色；設為空陣列 `[]` 則只用 `backgroundText.color` 單色。"
+        },
+        "backgroundText.random.fragmentMin": {
+          "type": "number",
+          "default": 4,
+          "minimum": 1,
+          "description": "每段擷取的最短字數（取自檔案的片段與 charset 亂碼段都適用）。"
+        },
+        "backgroundText.random.fragmentMax": {
+          "type": "number",
+          "default": 16,
+          "minimum": 1,
+          "description": "每段擷取的最長字數。設越大，保留的原文片段越完整。"
+        },
+        "backgroundText.random.columns": {
+          "type": "number",
+          "default": 200,
+          "minimum": 10,
+          "description": "亂碼模式每行字數（超出畫面的部分會被裁掉）。"
+        },
+        "backgroundText.random.refreshInterval": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "亂碼重新產生的間隔（毫秒），0 = 靜止不變。數字越小越吃效能。"
+        },
+        "backgroundText.lines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "Hello, VS Code"
+          ],
+          "description": "要顯示的文字，每個元素是一行。"
+        },
+        "backgroundText.color": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "文字顏色。留空 = 跟隨目前佈景主題的文字色（`editor.foreground`）；也可填佈景主題色 ID（例如 `textLink.foreground`、`terminal.ansiGreen`）或 CSS 顏色（例如 `#00ff66`）。"
+        },
+        "backgroundText.opacity": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "文字不透明度，0 = 全透明，1 = 不透明。"
+        },
+        "backgroundText.fontSize": {
+          "type": "string",
+          "default": "48px",
+          "description": "字體大小（CSS 值，例如 48px、3em）。"
+        },
+        "backgroundText.fontWeight": {
+          "type": "string",
+          "default": "bold",
+          "description": "字體粗細（CSS 值，例如 normal、bold、700）。"
+        },
+        "backgroundText.lineSpacing": {
+          "type": "number",
+          "default": 1.2,
+          "description": "多行文字之間的行距（以字體大小的倍數計）。"
+        },
+        "backgroundText.left": {
+          "type": "string",
+          "default": "20vw",
+          "description": "距離編輯區左緣的水平位置（CSS 值，例如 20vw、300px）。"
+        },
+        "backgroundText.verticalOffset": {
+          "type": "string",
+          "default": "-1em",
+          "description": "相對於畫面中間那一行的垂直偏移（CSS 值）。"
+        },
+        "backgroundText.rotate": {
+          "type": "number",
+          "default": 0,
+          "description": "旋轉角度（度），例如 -20 可做出斜放的浮水印。"
+        }
+      }
+    }
+  }
+}
